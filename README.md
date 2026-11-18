@@ -2,6 +2,18 @@
 
 Your GitHub contribution graph in the macOS menu bar.
 
+<p align="center">
+  <img src="docs/screenshots/year-dark.png" alt="ContribBar's Year tab in dark mode: a full-year contribution grid in a Liquid Glass panel" width="720">
+</p>
+
+| Today | 7 Days |
+|---|---|
+| <img src="docs/screenshots/today-dark.png" alt="Today tab: today's count with streaks and comparisons"> | <img src="docs/screenshots/week-light.png" alt="7 Days tab: bar chart of daily contributions"> |
+| **30 Days** | **Settings** |
+| <img src="docs/screenshots/month-light.png" alt="30 Days tab: bar chart with totals and best day"> | <img src="docs/screenshots/settings-light.png" alt="Settings: username, token, transparency slider"> |
+
+<sub>Screenshots show [@torvalds](https://github.com/torvalds)'s public contribution graph, loaded with the username option.</sub>
+
 The menu bar shows today's count next to the last 7 days as little green squares. Click it for a Liquid Glass panel with four views:
 
 | Tab | What you see |

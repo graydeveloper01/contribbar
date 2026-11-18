@@ -47,9 +47,10 @@ struct RangeView: View {
                 .opacity(hoveredDay == nil || hoveredDay == day ? 1 : 0.45)
                 .annotation(position: .top, spacing: 2) {
                     if kind == .week && day.contributionCount > 0 {
+                        // Explicit (non-vibrant) color: `.secondary` washes out over Liquid Glass.
                         Text("\(day.contributionCount)")
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
+                            .font(.caption.weight(.medium))
+                            .foregroundStyle(Color(nsColor: .secondaryLabelColor))
                     }
                 }
             }

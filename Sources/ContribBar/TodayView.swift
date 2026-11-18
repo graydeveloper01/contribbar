@@ -30,7 +30,7 @@ struct TodayView: View {
                 }
                 comparison(
                     Int((Double(today.contributionCount) - month.average).rounded()),
-                    against: "your 30-day average (\(month.average.formatted(.number.precision(.fractionLength(1)))))"
+                    against: "the 30-day average (\(month.average.formatted(.number.precision(.fractionLength(1)))))"
                 )
             }
 
