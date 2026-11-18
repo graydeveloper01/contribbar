@@ -54,7 +54,7 @@ mv build/ContribBar.app /Applications/
 open /Applications/ContribBar.app
 ```
 
-> The app is ad-hoc signed, not notarized. Building it yourself works without any warnings. If you share a built copy, recipients may need to right-click → **Open** the first time.
+> ContribBar is distributed as source only. An app you build on your own Mac opens without any Gatekeeper warnings. A copy built elsewhere and downloaded isn't notarized, so macOS blocks it until it's approved under **System Settings → Privacy & Security → Open Anyway**.
 
 ### Development
 
