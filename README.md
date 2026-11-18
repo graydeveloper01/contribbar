@@ -27,8 +27,8 @@ Other features:
 
 - Works **without a token**: just enter a GitHub username.
 - Uses your existing **GitHub CLI** login automatically if you have one.
+- **Theme**: System, Light or Dark, using GitHub's own green palette in each.
 - **Transparency** slider for the glass panel (Solid → Clear).
-- Light and dark mode, using GitHub's own green palette.
 - Refreshes every 10 minutes, after your Mac wakes, and when you open the panel.
 - Optional launch at login.
 

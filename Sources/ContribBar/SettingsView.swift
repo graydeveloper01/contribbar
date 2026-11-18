@@ -6,6 +6,7 @@ struct SettingsView: View {
     let done: () -> Void
 
     @AppStorage(Appearance.transparencyKey) private var transparency = Appearance.defaultTransparency
+    @AppStorage(Appearance.themeKey) private var theme: Theme = .system
     @State private var usernameDraft = ""
     @State private var token = ""
     @State private var fieldError: String?
@@ -56,7 +57,17 @@ struct SettingsView: View {
             }
 
             GroupBox {
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: 10) {
+                    HStack {
+                        Text("Theme")
+                        Spacer()
+                        Picker("Theme", selection: $theme) {
+                            ForEach(Theme.allCases) { Text($0.title).tag($0) }
+                        }
+                        .pickerStyle(.segmented)
+                        .labelsHidden()
+                        .fixedSize()
+                    }
                     HStack {
                         Text("Transparency")
                         Spacer()

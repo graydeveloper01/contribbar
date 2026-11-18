@@ -10,6 +10,7 @@ final class StatusController: NSObject {
     private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
     private let panel: GlassPanel
     private var snapshotSubscription: AnyCancellable?
+    private var themeSubscription: AnyCancellable?
     private var observers: [NSObjectProtocol] = []
     private var clickMonitor: Any?
     private var lastHidden = Date.distantPast
@@ -25,6 +26,10 @@ final class StatusController: NSObject {
             button.imagePosition = .imageLeading
         }
         snapshotSubscription = store.$snapshot.sink { [weak self] in self?.updateButton($0) }
+        // Applying the theme to the window (not just SwiftUI) also switches the glass and the AppKit-backed colors.
+        themeSubscription = UserDefaults.standard.publisher(for: \.theme).sink { [weak self] value in
+            self?.panel.appearance = (Theme(rawValue: value) ?? .system).nsAppearance
+        }
 
         observers.append(NotificationCenter.default.addObserver(forName: NSWindow.didResignKeyNotification, object: panel, queue: .main) { [weak self] _ in
             MainActor.assumeIsolated { self?.hidePanel() }

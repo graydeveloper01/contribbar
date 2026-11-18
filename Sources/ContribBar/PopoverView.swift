@@ -13,15 +13,39 @@ enum Tab: String, CaseIterable, Identifiable {
 enum Appearance {
     static let transparencyKey = "transparency"
     static let defaultTransparency = 0.4
+    static let themeKey = "theme"  // must match `UserDefaults.theme` below, which is observed via KVO
     static let cornerRadius: CGFloat = 22
+}
+
+enum Theme: String, CaseIterable, Identifiable {
+    case system, light, dark
+
+    var id: Self { self }
+    var title: String { rawValue.capitalized }
+
+    /// nil means "inherit the system appearance".
+    var nsAppearance: NSAppearance? {
+        switch self {
+        case .system: nil
+        case .light: NSAppearance(named: .aqua)
+        case .dark: NSAppearance(named: .darkAqua)
+        }
+    }
+}
+
+extension UserDefaults {
+    /// KVO-observable mirror of `Appearance.themeKey` (the property name must equal the key).
+    @objc dynamic var theme: String {
+        string(forKey: Appearance.themeKey) ?? Theme.system.rawValue
+    }
 }
 
 struct PopoverView: View {
     static let width: CGFloat = 640
     static let padding: CGFloat = 18
     static var contentWidth: CGFloat { width - padding * 2 }
-    /// Tab picker + tallest tab (the charts, ~230pt) — also fits Settings (~271pt).
-    static let bodyHeight: CGFloat = 280
+    /// Tab picker + tallest tab (the charts, ~230pt) — also fits Settings (~287pt).
+    static let bodyHeight: CGFloat = 290
 
     @EnvironmentObject private var store: ContributionStore
     @AppStorage("selectedTab") private var tab: Tab = .today
