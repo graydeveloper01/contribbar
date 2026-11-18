@@ -5,11 +5,14 @@ import SwiftUI
 enum DataSource: Equatable {
     case api(TokenSource)  // GraphQL API with a token
     case publicProfile  // github.com public graph, no token
+    case publicFallback(TokenSource)  // have a token, but the API kept failing — public graph for now
 }
 
 @MainActor
 final class ContributionStore: ObservableObject {
     static let usernameKey = "githubUsername"
+    /// Test seam: lets a harness substitute a client (e.g. one whose responses are stubbed).
+    static var makeClient: (String) -> GitHubClient = { GitHubClient(token: $0) }
 
     @Published private(set) var snapshot: ContributionSnapshot?
     @Published private(set) var isLoading = false
@@ -55,8 +58,16 @@ final class ContributionStore: ObservableObject {
 
         do {
             if let resolved {
-                snapshot = try await GitHubClient(token: resolved.token).fetchSnapshot(login: username)
-                dataSource = .api(resolved.source)
+                let client = Self.makeClient(resolved.token)
+                do {
+                    snapshot = try await client.fetchSnapshot(login: username)  // retries transient failures itself
+                    dataSource = .api(resolved.source)
+                } catch where GitHubClient.isTransient(error) {
+                    // The API is still failing after retries: show the same account's public graph instead.
+                    guard let login = await fallbackLogin(client) else { throw error }
+                    snapshot = try await PublicContributions.fetchSnapshot(login: login)
+                    dataSource = .publicFallback(resolved.source)
+                }
             } else if let username {
                 snapshot = try await PublicContributions.fetchSnapshot(login: username)
                 dataSource = .publicProfile
@@ -69,6 +80,14 @@ final class ContributionStore: ObservableObject {
         } catch {
             errorMessage = error.localizedDescription
         }
+    }
+
+    /// Whose public graph to fall back to: the chosen username, else the account we last showed,
+    /// else ask GitHub who owns the token (a cheap REST call that usually works when GraphQL is struggling).
+    private func fallbackLogin(_ client: GitHubClient) async -> String? {
+        if let username { return username }
+        if let login = snapshot?.login { return login }
+        return try? await client.viewerLogin()
     }
 
     /// GitHub usernames: 1–39 letters, digits or single hyphens, not starting or ending with a hyphen.

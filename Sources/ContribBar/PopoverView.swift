@@ -156,7 +156,13 @@ struct PopoverView: View {
                 } else if store.isLoading {
                     Text("Refreshing…")
                 } else if let snapshot = store.snapshot {
-                    Text("Updated \(snapshot.fetchedAt.formatted(date: .omitted, time: .shortened))")
+                    let time = snapshot.fetchedAt.formatted(date: .omitted, time: .shortened)
+                    if case .publicFallback = store.dataSource {
+                        Text("Updated \(time) · public graph")
+                            .help("GitHub's API isn't responding, so this is the public profile graph. The API is retried on the next refresh.")
+                    } else {
+                        Text("Updated \(time)")
+                    }
                 }
             }
             .font(.callout)

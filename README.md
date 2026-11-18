@@ -95,6 +95,8 @@ Create a [classic token](https://github.com/settings/tokens) with the `read:user
 
 Settings always shows which source is active. The official API uses your local timezone for day boundaries.
 
+If GitHub's API has trouble (server errors or query timeouts, which can happen with very active accounts), ContribBar retries twice. If it still fails, it shows the same account's public graph, marked "public graph" in the footer, and goes back to the API on the next refresh.
+
 ## Privacy
 
 - ContribBar only talks to `api.github.com` (with a token) or `github.com` (without one).

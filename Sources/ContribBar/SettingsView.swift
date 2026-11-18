@@ -128,6 +128,9 @@ struct SettingsView: View {
             let via = source == .ghCLI ? "your GitHub CLI login" : "your saved token"
             if let who { return "Showing \(who) via the GitHub API, using \(via)." }
             return "Showing the account of \(via). Enter a username to show a different profile."
+        case .publicFallback:
+            return "GitHub's API isn't responding right now, so this is \(who.map { "\($0)'s" } ?? "your") public graph for the moment. "
+                + "ContribBar will switch back to the API automatically on the next refresh."
         case .publicProfile:
             return "Showing \(who ?? "this user")'s public graph — no token needed. Private contributions appear only "
                 + "if enabled on the profile, and days may not follow your timezone. Add a token for the official API."
