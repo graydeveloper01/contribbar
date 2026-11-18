@@ -28,8 +28,8 @@ Other features:
 ## Build and run
 
 ```sh
-git clone https://github.com/graydeveloper01/contribar.git
-cd contribar
+git clone https://github.com/graydeveloper01/contribbar.git
+cd contribbar
 ./build.sh --open
 ```
 
