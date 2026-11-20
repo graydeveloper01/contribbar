@@ -2,6 +2,7 @@ import SwiftUI
 
 struct TodayView: View {
     let snapshot: ContributionSnapshot
+    @Environment(\.palette) private var palette
 
     var body: some View {
         let today = snapshot.today
@@ -14,7 +15,7 @@ struct TodayView: View {
 
                 HStack(alignment: .firstTextBaseline, spacing: 10) {
                     RoundedRectangle(cornerRadius: 4)
-                        .fill(Palette.color(today.contributionLevel))
+                        .fill(palette.color(today.contributionLevel))
                         .frame(width: 22, height: 22)
                         .alignmentGuide(.firstTextBaseline) { $0[.bottom] - 4 }
                     Text("\(today.contributionCount)")
@@ -53,7 +54,7 @@ struct TodayView: View {
         }
         return Label(text, systemImage: symbol)
             .font(.callout)
-            .foregroundStyle(delta > 0 ? AnyShapeStyle(Palette.color(.third)) : AnyShapeStyle(.secondary))
+            .foregroundStyle(delta > 0 ? AnyShapeStyle(palette.accent) : AnyShapeStyle(.secondary))
     }
 
     private func days(_ n: Int) -> String { n == 1 ? "1 day" : "\(n) days" }

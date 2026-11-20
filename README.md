@@ -27,8 +27,8 @@ Other features:
 
 - Works **without a token**: just enter a GitHub username.
 - Uses your existing **GitHub CLI** login automatically if you have one.
-- **Theme**: System, Light or Dark, using GitHub's own green palette in each.
-- **Transparency** slider for the glass panel (Solid → Clear).
+- **Theme**: System, Light or Dark (Liquid Glass with GitHub's green palette), or a solid finish with engraved ink and its own level colors: **Cobalt** (anodized metal, fire-opal levels), **Fire Opal** (glowing gem, cobalt levels), **Emerald** (jewel-tone metal, marigold levels) or **Sand** (matte cream, terracotta levels). Finishes catch the light differently each time the panel opens.
+- **Transparency** slider for the glass panel (Solid → Clear; glass themes only).
 - Refreshes every 10 minutes, after your Mac wakes, and when you open the panel.
 - Optional launch at login.
 
@@ -114,7 +114,8 @@ Sources/ContribBar/
 ├── PublicContributions.swift Public profile graph (no token)
 ├── TokenStore.swift          Keychain and `gh auth token`
 ├── Models.swift              Days, streaks, stats
-├── Palette.swift             GitHub greens and the menu bar icon
+├── Palette.swift             GitHub greens, panel level colors, and the menu bar icon
+├── Finish.swift              Solid finishes (Cobalt, Fire Opal, Emerald, Sand) and their plate renderer
 ├── PopoverView.swift         Panel layout, header, footer
 ├── TodayView.swift  RangeView.swift  YearView.swift  SettingsView.swift
 build.sh                      Builds ContribBar.app

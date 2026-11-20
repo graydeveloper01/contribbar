@@ -18,10 +18,26 @@ enum Appearance {
 }
 
 enum Theme: String, CaseIterable, Identifiable {
+    // Liquid Glass
     case system, light, dark
+    // Solid finishes instead of glass
+    case cobalt, fireOpal, emerald, sand
 
     var id: Self { self }
-    var title: String { rawValue.capitalized }
+    static let glass: [Theme] = [.system, .light, .dark]
+    static let finishes: [Theme] = [.cobalt, .fireOpal, .emerald, .sand]
+
+    var title: String { finish?.name ?? rawValue.capitalized }
+
+    var finish: Finish? {
+        switch self {
+        case .system, .light, .dark: nil
+        case .cobalt: .cobalt
+        case .fireOpal: .fireOpal
+        case .emerald: .emerald
+        case .sand: .sand
+        }
+    }
 
     /// nil means "inherit the system appearance".
     var nsAppearance: NSAppearance? {
@@ -29,6 +45,7 @@ enum Theme: String, CaseIterable, Identifiable {
         case .system: nil
         case .light: NSAppearance(named: .aqua)
         case .dark: NSAppearance(named: .darkAqua)
+        case .cobalt, .fireOpal, .emerald, .sand: finish?.appearance
         }
     }
 }
@@ -50,6 +67,7 @@ struct PopoverView: View {
     @EnvironmentObject private var store: ContributionStore
     @AppStorage("selectedTab") private var tab: Tab = .today
     @AppStorage(Appearance.transparencyKey) private var transparency = Appearance.defaultTransparency
+    @AppStorage(Appearance.themeKey) private var theme: Theme = .system
     @State private var showingSettings = false
 
     var body: some View {
@@ -82,12 +100,7 @@ struct PopoverView: View {
         }
         .padding(Self.padding)
         .frame(width: Self.width)
-        // Transparency = how much of the solid backing sits on top of the clear glass.
-        .background(
-            Color(nsColor: .windowBackgroundColor).opacity(1 - transparency),
-            in: .rect(cornerRadius: Appearance.cornerRadius)
-        )
-        .glassEffect(.clear, in: .rect(cornerRadius: Appearance.cornerRadius))
+        .modifier(PanelFinish(finish: theme.finish, transparency: transparency))
     }
 
     private var header: some View {
@@ -190,15 +203,46 @@ struct PopoverView: View {
     }
 }
 
+/// The panel's backing: Liquid Glass under an adjustable solid layer, or a solid finish with engraved ink.
+/// Modifiers stay in place for both (only their values change), so switching themes keeps view state.
+private struct PanelFinish: ViewModifier {
+    let finish: Finish?
+    let transparency: Double
+
+    func body(content: Content) -> some View {
+        let shape = RoundedRectangle(cornerRadius: Appearance.cornerRadius)
+        content
+            .foregroundStyle(
+                finish.map { AnyShapeStyle($0.inkPrimary) } ?? AnyShapeStyle(.primary),
+                finish.map { AnyShapeStyle($0.inkSecondary) } ?? AnyShapeStyle(.secondary),
+                finish.map { AnyShapeStyle($0.inkTertiary) } ?? AnyShapeStyle(.tertiary)
+            )
+            // Engraved into the plate: an edge in shadow above, one catching light below.
+            .shadow(color: finish?.engraveAbove ?? .clear, radius: 0, y: -1)
+            .shadow(color: finish?.engraveBelow ?? .clear, radius: 0, y: 1)
+            .environment(\.palette, ContributionPalette(finish: finish))
+            .background {
+                if let finish {
+                    FinishPlate(finish: finish, cornerRadius: Appearance.cornerRadius)
+                } else {
+                    // Transparency = how much of the solid backing sits on top of the clear glass.
+                    shape.fill(Color(nsColor: .windowBackgroundColor).opacity(1 - transparency))
+                }
+            }
+            .glassEffect(finish == nil ? .clear : .identity, in: shape)
+    }
+}
+
 struct StatTile: View {
     let title: String
     let value: String
     let symbol: String
+    @Environment(\.palette) private var palette
 
     var body: some View {
         HStack(spacing: 10) {
             Image(systemName: symbol)
-                .foregroundStyle(Palette.color(.third))
+                .foregroundStyle(palette.accent)
                 .frame(width: 18)
             VStack(alignment: .leading, spacing: 1) {
                 Text(title)

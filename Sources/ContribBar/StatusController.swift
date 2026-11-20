@@ -70,6 +70,9 @@ final class StatusController: NSObject {
 
     private func hidePanel() {
         panel.orderOut(nil)
+        if Theme(rawValue: UserDefaults.standard.theme)?.finish != nil {
+            PlateRenderer.shared.advance()  // a new reflection for the next opening, swapped while hidden
+        }
         statusItem.button?.highlight(false)
         lastHidden = .now
         if let clickMonitor {

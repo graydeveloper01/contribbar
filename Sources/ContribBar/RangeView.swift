@@ -8,6 +8,7 @@ struct RangeView: View {
     let days: [ContributionDay]
     let kind: Kind
     @State private var hoveredKey: String?
+    @Environment(\.palette) private var palette
 
     private var hoveredDay: ContributionDay? {
         days.first { $0.date == hoveredKey }
@@ -42,7 +43,7 @@ struct RangeView: View {
                     x: .value("Day", day.date),  // categorical, so labels center under bars
                     y: .value("Contributions", day.contributionCount)
                 )
-                .foregroundStyle(Palette.color(day.contributionLevel == .none ? .first : day.contributionLevel))
+                .foregroundStyle(palette.color(day.contributionLevel == .none ? .first : day.contributionLevel))
                 .cornerRadius(3)
                 .opacity(hoveredDay == nil || hoveredDay == day ? 1 : 0.45)
                 .annotation(position: .top, spacing: 2) {

@@ -6,6 +6,7 @@ struct YearView: View {
     let width: CGFloat
 
     @State private var hovered: ContributionDay?
+    @Environment(\.palette) private var palette
 
     private let gap: CGFloat = 2
     private let labelWidth: CGFloat = 28
@@ -58,7 +59,7 @@ struct YearView: View {
                             height: cell
                         )
                         let path = Path(roundedRect: rect, cornerRadius: 2)
-                        context.fill(path, with: .color(Palette.color(day.contributionLevel)))
+                        context.fill(path, with: .color(palette.color(day.contributionLevel)))
                         if day == hovered {
                             context.stroke(path, with: .color(.primary.opacity(0.8)), lineWidth: 1.5)
                         }
@@ -94,7 +95,7 @@ struct YearView: View {
                     Text("Less").padding(.trailing, 2)
                     ForEach(ContributionLevel.allCases, id: \.self) { level in
                         RoundedRectangle(cornerRadius: 2)
-                            .fill(Palette.color(level))
+                            .fill(palette.color(level))
                             .frame(width: 10, height: 10)
                     }
                     Text("More").padding(.leading, 2)

@@ -3,10 +3,6 @@ import SwiftUI
 
 /// GitHub's contribution greens, with separate light and dark ramps.
 enum Palette {
-    static func color(_ level: ContributionLevel) -> Color {
-        Color(nsColor: nsColor(level))
-    }
-
     static func nsColor(_ level: ContributionLevel) -> NSColor {
         let (light, dark): (UInt32, UInt32) = switch level {
         case .none: (0xEBEDF0, 0x2D333B)
@@ -20,6 +16,25 @@ enum Palette {
             return NSColor(hex: isDark ? dark : light)
         }
     }
+}
+
+/// Contribution colours inside the panel. Read it from the environment: a solid finish swaps
+/// GitHub's greens for its own level ramp.
+struct ContributionPalette {
+    static let github = ContributionPalette(finish: nil)
+
+    let finish: Finish?
+
+    func color(_ level: ContributionLevel) -> Color {
+        finish?.levelColor(level) ?? Color(nsColor: Palette.nsColor(level))
+    }
+
+    /// Icons and "more than" highlights.
+    var accent: Color { finish?.accent ?? color(.third) }
+}
+
+extension EnvironmentValues {
+    @Entry var palette: ContributionPalette = .github
 }
 
 private extension NSColor {

@@ -62,16 +62,23 @@ struct SettingsView: View {
                         Text("Theme")
                         Spacer()
                         Picker("Theme", selection: $theme) {
-                            ForEach(Theme.allCases) { Text($0.title).tag($0) }
+                            ForEach(Theme.glass) { Text($0.title).tag($0) }
+                            Divider()
+                            ForEach(Theme.finishes) { theme in
+                                if let finish = theme.finish {
+                                    Label { Text(theme.title) } icon: { Image(nsImage: finish.swatch) }
+                                        .tag(theme)
+                                }
+                            }
                         }
-                        .pickerStyle(.segmented)
+                        .pickerStyle(.menu)
                         .labelsHidden()
                         .fixedSize()
                     }
                     HStack {
                         Text("Transparency")
                         Spacer()
-                        Text(transparency.formatted(.percent.precision(.fractionLength(0))))
+                        Text(theme.finish != nil ? "Solid finish" : transparency.formatted(.percent.precision(.fractionLength(0))))
                             .monospacedDigit()
                             .foregroundStyle(.secondary)
                     }
@@ -82,6 +89,7 @@ struct SettingsView: View {
                     } maximumValueLabel: {
                         Text("Clear").font(.caption).foregroundStyle(.secondary)
                     }
+                    .disabled(theme.finish != nil)  // a solid finish has no glass to see through
                 }
                 .padding(6)
             } label: {
